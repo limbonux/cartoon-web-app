@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+        <meta name="theme-color" content="#FFFFFF">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="description"
+            content="حوّل صورك إلى لوحات كرتونية بأسلوب Studio Ghibli بالذكاء الاصطناعي">
+        <title>كرتون ميكر - AI Cartoonizer</title>
+        <link rel="manifest" href="./manifest.json">
+        <link rel="icon" type="image/png" sizes="192x192"
+            href="./assets/icons/icon-192.png">
+        <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
+        <link rel="stylesheet" href="./config/app-theme.css">
+    </head>
+    <body>
+
+        <!-- ═══ SPLASH SCREEN (مطابق لـ splash_screen.dart) ═══ -->
+        <div id="splash-screen">
+            <div class="splash-circle">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M7.5 5.6L10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29a.996.996 0 0 0-1.41 0L1.29 18.96a.996.996 0 0 0 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05a.996.996 0 0 0 0-1.41l-2.33-2.35z" />
+                </svg>
+            </div>
+            <h2 class="splash-title">كرتون ميكر</h2>
+            <p class="splash-subtitle">حول صورك إلى لوحات فنية</p>
+            <div class="spinkit-wave">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <!-- ═══ MAIN APP ═══ -->
+        <div id="app" class="hidden">
+
+            <!-- AppBar (centerTitle: true, elevation: 0) -->
+            <header class="appbar">
+                <button id="theme-toggle" class="appbar-btn"
+                    aria-label="تبديل الثيم"></button>
+                <h1 class="appbar-title" id="appbar-title">تحويل كرتون</h1>
+                <div class="appbar-btn" style="visibility:hidden"></div>
+            </header>
+
+            <!-- Body (SingleChildScrollView + padding: 20) -->
+            <main class="body-scroll">
+
+                <!-- ═══ CARTOON SCREEN ═══ -->
+                <section id="cartoon-screen" class="screen active">
+
+                    <!-- ImagePickerButton (مطابق تماماً) -->
+                    <div class="card picker-card" id="cartoon-picker">
+                        <svg class="picker-icon" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="3" />
+                            <path d="M8.5 8.5h0" stroke-width="2"
+                                stroke-linecap="round" />
+                            <path d="M3 16l5-5 4 4" />
+                            <path d="M14 14l3-3 4 4" />
+                            <line x1="14" y1="3" x2="14" y2="9"
+                                stroke-linecap="round" />
+                            <line x1="11" y1="6" x2="17" y2="6"
+                                stroke-linecap="round" />
+                        </svg>
+                        <span class="picker-label">إضافة صورة</span>
+                    </div>
+
+                    <!-- BeforeAfterView (مطابق تماماً - ظاهر دائماً) -->
+                    <div class="card ba-card">
+                        <div class="ba-row">
+                            <div class="ba-col">
+                                <div class="ba-box" id="after-box">
+                                    <img id="cartoon-after-img"
+                                        class="ba-img hidden" alt="بعد">
+                                    <svg class="ba-icon" id="after-icon"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"><path
+                                            d="M7.5 5.6L10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29a.996.996 0 0 0-1.41 0L1.29 18.96a.996.996 0 0 0 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05a.996.996 0 0 0 0-1.41l-2.33-2.35z" /></svg>
+                                </div>
+                                <span class="ba-label">بعد</span>
+                            </div>
+                            <svg class="ba-arrow" viewBox="0 0 24 24"
+                                fill="currentColor"><path
+                                    d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" /></svg>
+                            <div class="ba-col">
+                                <div class="ba-box" id="before-box">
+                                    <img id="cartoon-before-img"
+                                        class="ba-img hidden" alt="قبل">
+                                    <svg class="ba-icon" id="before-icon"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"><path
+                                            d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" /></svg>
+                                </div>
+                                <span class="ba-label">قبل</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ActionButtons (مطابق تماماً - ظاهرين دائماً) -->
+                    <div class="actions-col">
+                        <button class="btn-elevated" id="cartoon-download-btn"
+                            disabled>
+                            <svg width="20" height="20" viewBox="0 0 24 24"
+                                fill="currentColor"><path
+                                    d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>
+                            تحميل الصورة
+                        </button>
+                        <button class="btn-outlined" id="cartoon-share-btn"
+                            disabled>
+                            <svg width="20" height="20" viewBox="0 0 24 24"
+                                fill="currentColor"><path
+                                    d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>
+                            مشاركة الصورة
+                        </button>
+                    </div>
+
+                </section>
+
+                <!-- ═══ ENHANCE SCREEN ═══ -->
+                <section id="enhance-screen" class="screen">
+
+                    <div class="card picker-card" id="enhance-picker">
+                        <svg class="picker-icon" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="3" />
+                            <path d="M8.5 8.5h0" stroke-width="2"
+                                stroke-linecap="round" />
+                            <path d="M3 16l5-5 4 4" />
+                            <path d="M14 14l3-3 4 4" />
+                            <line x1="14" y1="3" x2="14" y2="9"
+                                stroke-linecap="round" />
+                            <line x1="11" y1="6" x2="17" y2="6"
+                                stroke-linecap="round" />
+                        </svg>
+                        <span class="picker-label">إضافة صورة</span>
+                    </div>
+
+                    <div class="card enhance-preview hidden"
+                        id="enhance-preview">
+                        <img id="enhance-img" alt="الصورة المحسنة">
+                    </div>
+
+                    <div class="card slider-card hidden" id="enhance-controls">
+                        <div class="slider-row">
+                            <div class="slider-head"><span>السطوع</span><span
+                                    class="s-val"
+                                    id="brightness-val">0%</span></div>
+                            <input type="range" id="brightness-slider" min="-50"
+                                max="50" value="0">
+                        </div>
+                        <div class="slider-row">
+                            <div class="slider-head"><span>التباين</span><span
+                                    class="s-val"
+                                    id="contrast-val">0%</span></div>
+                            <input type="range" id="contrast-slider" min="-50"
+                                max="50" value="0">
+                        </div>
+                        <div class="slider-row">
+                            <div class="slider-head"><span>الحدة</span><span
+                                    class="s-val"
+                                    id="sharpness-val">0%</span></div>
+                            <input type="range" id="sharpness-slider" min="0"
+                                max="100" value="0">
+                        </div>
+                        <div class="slider-row">
+                            <div class="slider-head"><span>التشبع</span><span
+                                    class="s-val"
+                                    id="saturation-val">0%</span></div>
+                            <input type="range" id="saturation-slider" min="-50"
+                                max="50" value="0">
+                        </div>
+                        <button class="btn-text-small" id="enhance-reset-btn">↺
+                            إعادة تعيين</button>
+                    </div>
+
+                    <div class="actions-col hidden" id="enhance-actions">
+                        <button class="btn-elevated" id="enhance-download-btn"
+                            disabled>
+                            <svg width="20" height="20" viewBox="0 0 24 24"
+                                fill="currentColor"><path
+                                    d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>
+                            تحميل الصورة
+                        </button>
+                        <button class="btn-outlined" id="enhance-share-btn"
+                            disabled>
+                            <svg width="20" height="20" viewBox="0 0 24 24"
+                                fill="currentColor"><path
+                                    d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>
+                            مشاركة الصورة
+                        </button>
+                    </div>
+
+                </section>
+            </main>
+
+            <!-- BottomNavigationBar (مطابق تماماً) -->
+            <nav class="bottom-nav">
+                <button class="nav-item" data-tab="enhance" id="nav-enhance">
+                    <svg width="24" height="24" viewBox="0 0 24 24"
+                        fill="currentColor"><path
+                            d="M7.5 5.6L10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29a.996.996 0 0 0-1.41 0L1.29 18.96a.996.996 0 0 0 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05a.996.996 0 0 0 0-1.41l-2.33-2.35z" /></svg>
+                    <span>تحسين الجودة</span>
+                </button>
+                <button class="nav-item active" data-tab="cartoon"
+                    id="nav-cartoon">
+                    <svg width="24" height="24" viewBox="0 0 24 24"
+                        fill="currentColor"><path
+                            d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34a.996.996 0 0 0-1.41 0L9 12.25 11.75 15l8.96-8.96a.996.996 0 0 0 0-1.41z" /></svg>
+                    <span>تحويل كرتون</span>
+                </button>
+            </nav>
+
+        </div>
+
+        <!-- ═══ LOADING OVERLAY (مطابق لـ loading_overlay.dart) ═══ -->
+        <div id="loading-overlay">
+            <div class="loading-dialog">
+                <div class="loading-icon-box">
+                    <svg width="40" height="40" viewBox="0 0 24 24"
+                        fill="currentColor">
+                        <path
+                            d="M7.5 5.6L10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29a.996.996 0 0 0-1.41 0L1.29 18.96a.996.996 0 0 0 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05a.996.996 0 0 0 0-1.41l-2.33-2.35z" />
+                    </svg>
+                </div>
+                <div class="loading-bar-track"><div
+                        class="loading-bar-fill"></div></div>
+                <p class="loading-msg" id="loading-message">جاري تحميل
+                    النموذج...</p>
+                <p class="loading-sub">قد يستغرق بضع ثوانٍ...</p>
+            </div>
+        </div>
+
+        <!-- Toast / SnackBar -->
+        <div class="snackbar" id="snackbar"></div>
+
+        <!-- ═══ SCRIPTS ═══ -->
+        <script type="module">
+    import { themeController } from './config/theme-controller.js';
+    import { AppStrings } from './config/app-strings.js';
+    import { cartoonService } from './services/cartoon-service.js';
+    import { enhanceService } from './services/enhance-service.js';
+    import { imageService } from './services/image-service.js';
+    import { fileToObjectURL, revokeObjectURL } from './utils/image-utils.js';
+
+    const state = {
+        cartoon: { file: null, url: null, resultURL: null },
+        enhance: { file: null, url: null },
+    };
+    const $ = s => document.querySelector(s);
+    const $$ = s => document.querySelectorAll(s);
+
+    // ─── Splash (3 ثواني مثل Flutter) ───
+    setTimeout(() => {
+        $('#splash-screen').classList.add('fade-out');
+        setTimeout(() => {
+            $('#splash-screen').remove();
+            $('#app').classList.remove('hidden');
+        }, 600);
+    }, 3000);
+
+    // ─── Service Worker ───
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+
+    // ─── Theme ───
+    $('#theme-toggle').addEventListener('click', () => themeController.toggle());
+
+    // ─── BottomNavigationBar ───
+    $$('.nav-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+            $$('.nav-item').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            $$('.screen').forEach(s => s.classList.remove('active'));
+            $(`#${btn.dataset.tab}-screen`).classList.add('active');
+            $('#appbar-title').textContent =
+                btn.dataset.tab === 'cartoon' ? 'تحويل كرتون' : 'تحسين الجودة';
+        });
+    });
+
+    // ═══ CARTOON SCREEN ═══
+
+    // النقر على ImagePicker يفتح BottomSheet (مثل Flutter showModalBottomSheet)
+    $('#cartoon-picker').addEventListener('click', () => openSheet('cartoon'));
+    $('#enhance-picker').addEventListener('click', () => openSheet('enhance'));
+
+    function openSheet(mode) {
+        const overlay = document.createElement('div');
+        overlay.className = 'sheet-overlay';
+        overlay.innerHTML = `
+            <div class="sheet">
+                <div class="sheet-handle"></div>
+                <button class="sheet-item" data-action="gallery">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="sheet-icon"><path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/></svg>
+                    <span>اختر من المعرض</span>
+                </button>
+                <button class="sheet-item" data-action="camera">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="sheet-icon"><path d="M12 15.2c1.77 0 3.2-1.43 3.2-3.2S13.77 8.8 12 8.8 8.8 10.23 8.8 12s1.43 3.2 3.2 3.2zm7-10.2h-3.17L14 3H10L8.17 5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"/></svg>
+                    <span>التقط صورة</span>
+                </button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        requestAnimationFrame(() => overlay.classList.add('open'));
+
+        overlay.addEventListener('click', e => { if (e.target === overlay) closeSheet(overlay); });
+
+        overlay.querySelector('[data-action="gallery"]').onclick = async () => {
+            closeSheet(overlay);
+            const f = await imageService.pickFromGallery();
+            if (f) mode === 'cartoon' ? processCartoon(f) : loadEnhance(f);
+        };
+        overlay.querySelector('[data-action="camera"]').onclick = async () => {
+            closeSheet(overlay);
+            const f = await imageService.pickFromCamera();
+            if (f) mode === 'cartoon' ? processCartoon(f) : loadEnhance(f);
+        };
+    }
+
+    function closeSheet(el) {
+        el.classList.remove('open');
+        setTimeout(() => el.remove(), 300);
+    }
+
+    // ─── تحويل فوري بعد اختيار الصورة (مثل Flutter) ───
+    async function processCartoon(file) {
+        revokeObjectURL(state.cartoon.url);
+        state.cartoon.file = file;
+        state.cartoon.url = fileToObjectURL(file);
+        state.cartoon.resultURL = null;
+
+        // عرض الصورة في "قبل"
+        $('#cartoon-before-img').src = state.cartoon.url;
+        $('#cartoon-before-img').classList.remove('hidden');
+        $('#before-icon').classList.add('hidden');
+
+        // مسح "بعد"
+        $('#cartoon-after-img').src = '';
+        $('#cartoon-after-img').classList.add('hidden');
+        $('#after-icon').classList.remove('hidden');
+
+        // تعطيل أزرار
+        $('#cartoon-download-btn').disabled = true;
+        $('#cartoon-share-btn').disabled = true;
+
+        // بدء التحويل فوراً
+        showLoading();
+        let mi = 0;
+        const msgs = AppStrings.loadingMessages;
+        const iv = setInterval(() => {
+            mi = (mi + 1) % msgs.length;
+            $('#loading-message').textContent = msgs[mi];
+        }, 3000);
+
+        try {
+            const result = await cartoonService.convertToGhibli(file);
+            state.cartoon.resultURL = result;
+
+            $('#cartoon-after-img').src = result;
+            $('#cartoon-after-img').classList.remove('hidden');
+            $('#after-icon').classList.add('hidden');
+            $('#cartoon-download-btn').disabled = false;
+            $('#cartoon-share-btn').disabled = false;
+
+            snack('تم التحويل بنجاح ✓');
+        } catch (err) {
+            console.error(err);
+            snack(err.message || 'حدث خطأ أثناء تحويل الصورة');
+        } finally {
+            clearInterval(iv);
+            hideLoading();
+        }
+    }
+
+    $('#cartoon-download-btn').onclick = async () => {
+        if (!state.cartoon.resultURL) { snack('لا توجد صورة للحفظ'); return; }
+        const ok = await imageService.downloadImage(state.cartoon.resultURL, 'ghibli-cartoon.webp');
+        if (ok) snack('تم حفظ الصورة بنجاح ✓');
+    };
+    $('#cartoon-share-btn').onclick = async () => {
+        if (!state.cartoon.resultURL) { snack('لا توجد صورة للمشاركة'); return; }
+        await imageService.shareImage(state.cartoon.resultURL);
+    };
+
+    // ═══ ENHANCE SCREEN ═══
+    async function loadEnhance(file) {
+        state.enhance.file = file;
+        const url = await enhanceService.loadImage(file);
+        state.enhance.url = url;
+
+        $('#enhance-picker').classList.add('hidden');
+        $('#enhance-preview').classList.remove('hidden');
+        $('#enhance-img').src = url;
+        $('#enhance-controls').classList.remove('hidden');
+        $('#enhance-actions').classList.remove('hidden');
+        $('#enhance-download-btn').disabled = false;
+        $('#enhance-share-btn').disabled = false;
+        resetSliders();
+    }
+
+    const sliders = ['brightness','contrast','sharpness','saturation'];
+    sliders.forEach(n => {
+        $(`#${n}-slider`).oninput = e => {
+            $(`#${n}-val`).textContent = `${e.target.value}%`;
+            applyEnh();
+        };
+    });
+
+    function applyEnh() {
+        const r = enhanceService.applyEnhancements({
+            brightness: +$('#brightness-slider').value / 100,
+            contrast: +$('#contrast-slider').value / 100,
+            sharpness: +$('#sharpness-slider').value / 100,
+            saturation: +$('#saturation-slider').value / 100,
+        });
+        if (r) { $('#enhance-img').src = r; state.enhance.url = r; }
+    }
+
+    $('#enhance-reset-btn').onclick = () => {
+        resetSliders();
+        const r = enhanceService.reset();
+        if (r) { $('#enhance-img').src = r; state.enhance.url = r; }
+    };
+
+    function resetSliders() {
+        sliders.forEach(n => { $(`#${n}-slider`).value = 0; $(`#${n}-val`).textContent = '0%'; });
+    }
+
+    $('#enhance-download-btn').onclick = async () => {
+        if (!state.enhance.url) return;
+        const ok = await imageService.downloadImage(state.enhance.url, 'enhanced.jpg');
+        if (ok) snack('تم حفظ الصورة بنجاح ✓');
+    };
+    $('#enhance-share-btn').onclick = async () => {
+        if (!state.enhance.url) return;
+        await imageService.shareImage(state.enhance.url);
+    };
+
+    // ═══ UTILITIES ═══
+    function showLoading() { $('#loading-overlay').classList.add('visible'); $('#loading-message').textContent = AppStrings.loadingMessages[0]; }
+    function hideLoading() { $('#loading-overlay').classList.remove('visible'); }
+    function snack(msg) {
+        const el = $('#snackbar'); el.textContent = msg;
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 3000);
+    }
+</script>
+    </body>
+</html>

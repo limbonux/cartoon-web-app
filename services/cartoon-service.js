@@ -10,6 +10,7 @@ class CartoonService {
         // ⚠️ غيّر هذا الرابط بعد نشر Cloudflare Worker
         this.proxyURL = 'https://cartoon-api-proxy.limbonux.workers.dev';
         this.modelVersion = '166efd159b4138da932522bc5af40d39194033f587d9bdbab1e594119eae3e7f';
+        this.DAILY_LIMIT = 3; // 🔒 الحد اليومي لكل مستخدم
     }
 
     /**
@@ -20,6 +21,9 @@ class CartoonService {
      */
     async convertToGhibli(imageFile, onProgress) {
         try {
+            // ⓪ التحقق من الحد اليومي
+            this.checkUsageLimit();
+
             // ① ضغط الصورة (512×512, ≤1MB)
             onProgress?.('compressing');
             const compressedBlob = await compressImage(imageFile);
@@ -74,10 +78,12 @@ class CartoonService {
             const output = await this.waitForResult(prediction.id, onProgress);
 
             // النتيجة قد تكون مصفوفة أو رابط مباشر
-            if (Array.isArray(output)) {
-                return output[0];
-            }
-            return output;
+            const resultURL = Array.isArray(output) ? output[0] : output;
+
+            // ✅ تسجيل الاستخدام بعد النجاح
+            this.incrementUsage();
+
+            return resultURL;
 
         } catch (error) {
             console.error('❌ خطأ في التحويل:', error);
@@ -121,6 +127,56 @@ class CartoonService {
         }
 
         throw new Error('انتهت مهلة الانتظار');
+    }
+
+    // ═══════════════════════════════════════════
+    // 🔒 نظام الحد اليومي (localStorage)
+    // ═══════════════════════════════════════════
+
+    /**
+     * التحقق من الحد اليومي - يرمي خطأ إذا تم تجاوزه
+     */
+    checkUsageLimit() {
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        const data = JSON.parse(localStorage.getItem('cartoon_usage') || '{}');
+
+        // إذا كان اليوم مختلف عن آخر استخدام، نعيد العداد
+        if (data.date !== today) {
+            return; // يوم جديد = 0 استخدامات
+        }
+
+        if (data.count >= this.DAILY_LIMIT) {
+            throw new Error(`لقد وصلت للحد اليومي (${this.DAILY_LIMIT} صور). حاول مرة أخرى غداً! 🎨`);
+        }
+    }
+
+    /**
+     * تسجيل استخدام جديد بعد نجاح التحويل
+     */
+    incrementUsage() {
+        const today = new Date().toISOString().split('T')[0];
+        const data = JSON.parse(localStorage.getItem('cartoon_usage') || '{}');
+
+        if (data.date !== today) {
+            // يوم جديد
+            localStorage.setItem('cartoon_usage', JSON.stringify({ date: today, count: 1 }));
+        } else {
+            data.count = (data.count || 0) + 1;
+            localStorage.setItem('cartoon_usage', JSON.stringify(data));
+        }
+
+        console.log(`📊 الاستخدام اليومي: ${this.getRemainingUses()}/${this.DAILY_LIMIT} متبقي`);
+    }
+
+    /**
+     * كم صورة متبقية اليوم؟
+     */
+    getRemainingUses() {
+        const today = new Date().toISOString().split('T')[0];
+        const data = JSON.parse(localStorage.getItem('cartoon_usage') || '{}');
+
+        if (data.date !== today) return this.DAILY_LIMIT;
+        return Math.max(0, this.DAILY_LIMIT - (data.count || 0));
     }
 
     /**

@@ -38,13 +38,13 @@ class CartoonService {
                         version: this.modelVersion,
                         input: {
                             image: base64,
-                            prompt: "GHIBLI style",
-                            prompt_strength: 0.8,
+                            prompt: "GHIBLI style, studio ghibli animation, high quality, detailed, vibrant colors",
+                            prompt_strength: 0.65,
 
                             model: "dev",
                             go_fast: true,
                             num_inference_steps: 28,
-                            guidance_scale: 3,
+                            guidance_scale: 3.5,
 
                             megapixels: "1",
                             aspect_ratio: "1:1",

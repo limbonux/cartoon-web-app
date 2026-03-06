@@ -22,10 +22,8 @@
         <!-- ═══ SPLASH SCREEN (مطابق لـ splash_screen.dart) ═══ -->
         <div id="splash-screen">
             <div class="splash-circle">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M7.5 5.6L10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29a.996.996 0 0 0-1.41 0L1.29 18.96a.996.996 0 0 0 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05a.996.996 0 0 0 0-1.41l-2.33-2.35z" />
-                </svg>
+                <img src="./assets/icons/logo.png" alt="كرتون ميكر"
+                    style="width: 120px; height: 120px; object-fit: contain;">
             </div>
             <h2 class="splash-title">كرتون ميكر</h2>
             <p class="splash-subtitle">حول صورك إلى لوحات فنية</p>
@@ -39,10 +37,10 @@
 
             <!-- AppBar (centerTitle: true, elevation: 0) -->
             <header class="appbar">
+                <div class="appbar-btn" style="visibility:hidden"></div>
+                <h1 class="appbar-title" id="appbar-title">تحويل كرتون</h1>
                 <button id="theme-toggle" class="appbar-btn"
                     aria-label="تبديل الثيم"></button>
-                <h1 class="appbar-title" id="appbar-title">تحويل كرتون</h1>
-                <div class="appbar-btn" style="visibility:hidden"></div>
             </header>
 
             <!-- Body (SingleChildScrollView + padding: 20) -->
@@ -72,20 +70,6 @@
                     <div class="card ba-card">
                         <div class="ba-row">
                             <div class="ba-col">
-                                <div class="ba-box" id="after-box">
-                                    <img id="cartoon-after-img"
-                                        class="ba-img hidden" alt="بعد">
-                                    <svg class="ba-icon" id="after-icon"
-                                        viewBox="0 0 24 24"
-                                        fill="currentColor"><path
-                                            d="M7.5 5.6L10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29a.996.996 0 0 0-1.41 0L1.29 18.96a.996.996 0 0 0 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05a.996.996 0 0 0 0-1.41l-2.33-2.35z" /></svg>
-                                </div>
-                                <span class="ba-label">بعد</span>
-                            </div>
-                            <svg class="ba-arrow" viewBox="0 0 24 24"
-                                fill="currentColor"><path
-                                    d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" /></svg>
-                            <div class="ba-col">
                                 <div class="ba-box" id="before-box">
                                     <img id="cartoon-before-img"
                                         class="ba-img hidden" alt="قبل">
@@ -95,6 +79,20 @@
                                             d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" /></svg>
                                 </div>
                                 <span class="ba-label">قبل</span>
+                            </div>
+                            <svg class="ba-arrow" viewBox="0 0 24 24"
+                                fill="currentColor"><path
+                                    d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" /></svg>
+                            <div class="ba-col">
+                                <div class="ba-box" id="after-box">
+                                    <img id="cartoon-after-img"
+                                        class="ba-img hidden" alt="بعد">
+                                    <svg class="ba-icon" id="after-icon"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"><path
+                                            d="M7.5 5.6L10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29a.996.996 0 0 0-1.41 0L1.29 18.96a.996.996 0 0 0 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05a.996.996 0 0 0 0-1.41l-2.33-2.35z" /></svg>
+                                </div>
+                                <span class="ba-label">بعد</span>
                             </div>
                         </div>
                     </div>
@@ -198,18 +196,18 @@
 
             <!-- BottomNavigationBar (مطابق تماماً) -->
             <nav class="bottom-nav">
-                <button class="nav-item" data-tab="enhance" id="nav-enhance">
-                    <svg width="24" height="24" viewBox="0 0 24 24"
-                        fill="currentColor"><path
-                            d="M7.5 5.6L10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29a.996.996 0 0 0-1.41 0L1.29 18.96a.996.996 0 0 0 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05a.996.996 0 0 0 0-1.41l-2.33-2.35z" /></svg>
-                    <span>تحسين الجودة</span>
-                </button>
                 <button class="nav-item active" data-tab="cartoon"
                     id="nav-cartoon">
                     <svg width="24" height="24" viewBox="0 0 24 24"
                         fill="currentColor"><path
                             d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34a.996.996 0 0 0-1.41 0L9 12.25 11.75 15l8.96-8.96a.996.996 0 0 0 0-1.41z" /></svg>
                     <span>تحويل كرتون</span>
+                </button>
+                <button class="nav-item" data-tab="enhance" id="nav-enhance">
+                    <svg width="24" height="24" viewBox="0 0 24 24"
+                        fill="currentColor"><path
+                            d="M7.5 5.6L10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29a.996.996 0 0 0-1.41 0L1.29 18.96a.996.996 0 0 0 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05a.996.996 0 0 0 0-1.41l-2.33-2.35z" /></svg>
+                    <span>تحسين الجودة</span>
                 </button>
             </nav>
 
@@ -218,12 +216,10 @@
         <!-- ═══ LOADING OVERLAY (مطابق لـ loading_overlay.dart) ═══ -->
         <div id="loading-overlay">
             <div class="loading-dialog">
-                <div class="loading-icon-box">
-                    <svg width="40" height="40" viewBox="0 0 24 24"
-                        fill="currentColor">
-                        <path
-                            d="M7.5 5.6L10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29a.996.996 0 0 0-1.41 0L1.29 18.96a.996.996 0 0 0 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05a.996.996 0 0 0 0-1.41l-2.33-2.35z" />
-                    </svg>
+                <div class="loading-icon-box"
+                    style="background: transparent; box-shadow: none; animation: pulse 1.5s ease-in-out infinite;">
+                    <img src="./assets/icons/logo.png" alt="جاري التحميل"
+                        style="width: 90px; height: 90px; object-fit: contain;">
                 </div>
                 <div class="loading-bar-track"><div
                         class="loading-bar-fill"></div></div>

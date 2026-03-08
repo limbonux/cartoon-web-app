@@ -9,12 +9,13 @@ class CartoonService {
     constructor() {
         // ⚠️ غيّر هذا الرابط بعد نشر Cloudflare Worker
         this.proxyURL = 'https://cartoon-api-proxy.limbonux.workers.dev';
-        this.modelVersion = '166efd159b4138da932522bc5af40d39194033f587d9bdbab1e594119eae3e7f';
+        // النموذج الجديد: flux-kontext-dev (يحافظ على الملامح)
+        this.modelPath = '/v1/models/black-forest-labs/flux-kontext-dev/predictions';
         this.DAILY_LIMIT = 7; // 🔒 الحد اليومي لكل مستخدم
     }
 
     /**
-     * تحويل الصورة إلى أسلوب Ghibli
+     * تحويل الصورة إلى أسلوب Ghibli مع الحفاظ على الملامح
      * @param {File} imageFile - ملف الصورة الأصلي
      * @param {Function} onProgress - callback لتحديث الحالة
      * @returns {Promise<string>} - رابط الصورة المحولة
@@ -31,32 +32,23 @@ class CartoonService {
 
             console.log(`📦 حجم الصورة بعد الضغط: ${(compressedBlob.size / 1024).toFixed(0)} KB`);
 
-            // ② إرسال للبروكسي
+            // ② إرسال للبروكسي (flux-kontext-dev)
             onProgress?.('sending');
             const response = await fetch(
-                `${this.proxyURL}/v1/predictions`,
+                `${this.proxyURL}${this.modelPath}`,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        version: this.modelVersion,
                         input: {
-                            image: base64,
-                            prompt: "GHBLI anime style, studio ghibli, anime illustration, cel shading, vibrant colors",
-                            prompt_strength: 0.8,
-
-                            model: "dev",
-                            go_fast: false,
-                            num_inference_steps: 32,
-                            guidance_scale: 3,
-
-                            megapixels: "1",
-                            aspect_ratio: "1:1",
-                            num_outputs: 1,
+                            input_image: base64,
+                            prompt: "Transform this photo into Studio Ghibli anime style illustration while keeping the same facial features, identity, pose, and clothing. Apply soft cel shading, vibrant colors, and hand-drawn anime aesthetic",
+                            go_fast: true,
+                            guidance: 2.5,
+                            aspect_ratio: "match_input_image",
                             output_format: "webp",
                             output_quality: 80,
-                            lora_scale: 1,
-
+                            num_inference_steps: 30,
                             disable_safety_checker: false,
                         }
                     })
@@ -65,7 +57,7 @@ class CartoonService {
 
             if (!response.ok) {
                 const errData = await response.json().catch(() => ({}));
-                throw new Error(errData.detail || `خطأ من السيرفر: ${response.status}`);
+                throw new Error(errData.detail || errData.error || `خطأ من السيرفر: ${response.status}`);
             }
 
             const prediction = await response.json();
@@ -76,15 +68,22 @@ class CartoonService {
 
             // ③ انتظار النتيجة
             onProgress?.('processing');
-            const output = await this.waitForResult(prediction.id, onProgress);
 
-            // النتيجة قد تكون مصفوفة أو رابط مباشر
-            const resultURL = Array.isArray(output) ? output[0] : output;
+            // flux-kontext-dev قد يُرجع النتيجة مباشرة (مع Prefer: wait)
+            if (prediction.output) {
+                this.incrementUsage();
+                // output هو رابط مباشر (string) وليس مصفوفة
+                return Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
+            }
+
+            // أو نتابع بالـ Polling
+            const output = await this.waitForResult(prediction.id, onProgress);
 
             // ✅ تسجيل الاستخدام بعد النجاح
             this.incrementUsage();
 
-            return resultURL;
+            // النتيجة قد تكون رابط مباشر أو مصفوفة
+            return Array.isArray(output) ? output[0] : output;
 
         } catch (error) {
             console.error('❌ خطأ في التحويل:', error);

@@ -137,35 +137,14 @@ class CartoonService {
      * التحقق من الحد اليومي - يرمي خطأ إذا تم تجاوزه
      */
     checkUsageLimit() {
-        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-        const data = JSON.parse(localStorage.getItem('cartoon_usage') || '{}');
-
-        // إذا كان اليوم مختلف عن آخر استخدام، نعيد العداد
-        if (data.date !== today) {
-            return; // يوم جديد = 0 استخدامات
-        }
-
-        if (data.count >= this.DAILY_LIMIT) {
-            throw new Error(`لقد وصلت للحد اليومي (${this.DAILY_LIMIT} صور). حاول مرة أخرى غداً! 🎨`);
-        }
+        return; // 🔓 إيقاف نظام الحد (مفتوح بدون حد)
     }
 
     /**
      * تسجيل استخدام جديد بعد نجاح التحويل
      */
     incrementUsage() {
-        const today = new Date().toISOString().split('T')[0];
-        const data = JSON.parse(localStorage.getItem('cartoon_usage') || '{}');
-
-        if (data.date !== today) {
-            // يوم جديد
-            localStorage.setItem('cartoon_usage', JSON.stringify({ date: today, count: 1 }));
-        } else {
-            data.count = (data.count || 0) + 1;
-            localStorage.setItem('cartoon_usage', JSON.stringify(data));
-        }
-
-        console.log(`📊 الاستخدام اليومي: ${this.getRemainingUses()}/${this.DAILY_LIMIT} متبقي`);
+        return; // 🔓 إيقاف نظام الحد
     }
 
     /**

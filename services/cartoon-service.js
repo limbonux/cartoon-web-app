@@ -42,13 +42,13 @@ class CartoonService {
                         version: this.modelVersion,
                         input: {
                             image: base64,
-                            prompt: "GHBLI anime style photo",
-                            prompt_strength: 0.77,
+                            prompt: "GHBLI anime style, studio ghibli, anime illustration, cel shading, vibrant colors",
+                            prompt_strength: 0.8,
 
                             model: "dev",
                             go_fast: false,
-                            num_inference_steps: 38,
-                            guidance_scale: 10,
+                            num_inference_steps: 32,
+                            guidance_scale: 3,
 
                             megapixels: "1",
                             aspect_ratio: "1:1",

@@ -42,7 +42,7 @@ class CartoonService {
                         version: this.modelVersion,
                         input: {
                             image: base64,
-                            prompt: "GHBLI style, maintain the subject's likeness, preserve facial features, studio ghibli anime",
+                            prompt: "GHBLI anime style photo",
                             prompt_strength: 0.45,
 
                             model: "dev",

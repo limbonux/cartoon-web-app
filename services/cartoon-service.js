@@ -43,18 +43,19 @@ class CartoonService {
                         input: {
                             image: base64,
                             prompt: "GHBLI anime style photo",
-                            prompt_strength: 0.45,
+                            prompt_strength: 0.77,
 
                             model: "dev",
                             go_fast: false,
-                            num_inference_steps: 28,
-                            guidance_scale: 2.5,
+                            num_inference_steps: 38,
+                            guidance_scale: 10,
 
                             megapixels: "1",
                             aspect_ratio: "1:1",
                             num_outputs: 1,
                             output_format: "webp",
                             output_quality: 80,
+                            lora_scale: 1,
 
                             disable_safety_checker: false,
                         }

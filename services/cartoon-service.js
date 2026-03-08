@@ -10,7 +10,7 @@ class CartoonService {
         // ⚠️ غيّر هذا الرابط بعد نشر Cloudflare Worker
         this.proxyURL = 'https://cartoon-api-proxy.limbonux.workers.dev';
         this.modelVersion = '166efd159b4138da932522bc5af40d39194033f587d9bdbab1e594119eae3e7f';
-        this.DAILY_LIMIT = 3; // 🔒 الحد اليومي لكل مستخدم
+        this.DAILY_LIMIT = 7; // 🔒 الحد اليومي لكل مستخدم
     }
 
     /**
